@@ -153,23 +153,24 @@ VITE_API_BASE_URL=http://your-api-url.com/api
 4. **타입 안전성**: TypeScript로 컴파일 타임 에러 방지
 5. **상태 관리**: Zustand로 간단하고 효율적인 상태 관리
 
-## 🚧 향후 개선 계획
+## 🚧 커서 프롬프트 (Auto)
 
-- [ ] 메모 수정/삭제 기능
-- [ ] 메모 검색 및 필터링
-- [ ] 사용자 프로필 관리
-- [ ] 메모 공유 기능
-- [ ] 다크/라이트 테마 전환
-- [ ] PWA 지원
-- [ ] 오프라인 기능
-
-## 🤝 기여하기
-
-1. Fork the Project
-2. Create your Feature Branch (`git checkout -b feature/AmazingFeature`)
-3. Commit your Changes (`git commit -m 'Add some AmazingFeature'`)
-4. Push to the Branch (`git push origin feature/AmazingFeature`)
-5. Open a Pull Request
+메모 서비스를 만들어줘.
+* vite 기반 react 프로젝트
+* typescript 사용
+* zustand를 사용한 메모 데이터 관리
+* axios를 사용한 backend-api 통신
+* backend-api가 없을 때는 mockup 데이터를 반환하여 화면 구성
+* 앱화면 기반으로 디자인
+* 모델 :
+  - 사용자 : id/pw 회원가입
+  - 디자인 템플릿 : 메모 배경 디자인을 결정하는 템플릿 정보
+  - 메모 : 제목, 내용,
+* 기능 :
+  - 메모 목록이 첫화면. 메모를 생성하려면 로그인 필수
+  - 메모 목록은 생성일 기준으로 정렬. 일자별로 영역 구분.
+  - 메모 생성화면에서 디자인 템플릿을 선택하고, 메모의 제목과 내용 작성
+  - 메모 상세화면에서 템플릿 기반 메모 정보 확인
 
 ## 📄 라이선스
 
