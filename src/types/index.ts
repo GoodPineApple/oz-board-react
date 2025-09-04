@@ -1,11 +1,11 @@
 export interface User {
-  id: string;
+  id: string | number;
   username: string;
   email: string;
 }
 
 export interface DesignTemplate {
-  id: string;
+  id: string | number;
   name: string;
   backgroundColor: string;
   textColor: string;
@@ -15,7 +15,7 @@ export interface DesignTemplate {
 }
 
 export interface Memo {
-  id: string;
+  id: string | number;
   title: string;
   content: string;
   templateId: string;

@@ -21,6 +21,7 @@ export const useMemoStore = create<MemoStore>((set, get) => ({
     
     try {
       const memos = await memoAPI.getMemos();
+      console.log('memos', memos);
       set({ memos, isLoading: false });
     } catch (error) {
       console.error('Failed to fetch memos:', error);
@@ -62,7 +63,8 @@ export const useMemoStore = create<MemoStore>((set, get) => ({
   },
 
   getMemoById: (id: string) => {
-    return get().memos.find(memo => memo.id === id);
+    const numId = Number(id);
+    return get().memos.find(memo => memo.id === numId);
   },
 
   getMemosByDate: () => {

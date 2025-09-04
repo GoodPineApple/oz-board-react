@@ -80,7 +80,7 @@ let api: AxiosInstance | null = null;
 if (API_BASE_URL) {
   api = axios.create({
     baseURL: API_BASE_URL,
-    timeout: 10000,
+    timeout: 60000,
     headers: {
       'Content-Type': 'application/json',
     },
@@ -120,6 +120,7 @@ if (API_BASE_URL) {
 export const authAPI = {
   login: async (data: LoginData): Promise<{ user: { id: string; username: string; email: string }; token: string }> => {
     if (api) {
+      console.log('login', data);
       const response = await api.post('/auth/login', data);
       return response.data;
     } else {
@@ -179,7 +180,10 @@ export const memoAPI = {
 
   createMemo: async (data: CreateMemoData): Promise<Memo> => {
     if (api) {
-      const response = await api.post('/memos', data);
+      const response = await api.post('/memos', {
+        ...data,
+        userId: '3'
+      });
       return response.data;
     } else {
       // Return mock created memo

@@ -20,7 +20,7 @@ const MemoDetail: React.FC = () => {
         setMemo(foundMemo);
       } else {
         // 메모가 없으면 목록으로 이동
-        navigate('/');
+        // navigate('/');
         return;
       }
     }
