@@ -80,7 +80,7 @@ let api: AxiosInstance | null = null;
 if (API_BASE_URL) {
   api = axios.create({
     baseURL: API_BASE_URL,
-    timeout: 60000,
+    timeout: 600000,
     headers: {
       'Content-Type': 'application/json',
     },
@@ -182,7 +182,8 @@ export const memoAPI = {
     if (api) {
       const response = await api.post('/memos', {
         ...data,
-        userId: '3'
+        // userId: '3' // SQL 서버 테스트할 때
+        userId: '68ba6585dc371dbe456ddb4d' // MongoDB 서버 테스트할 때
       });
       return response.data;
     } else {
@@ -226,6 +227,7 @@ export const templateAPI = {
   getTemplates: async (): Promise<DesignTemplate[]> => {
     if (api) {
       const response = await api.get('/templates');
+      console.log(response);
       return response.data;
     } else {
       // Return mock templates

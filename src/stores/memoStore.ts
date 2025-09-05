@@ -63,8 +63,8 @@ export const useMemoStore = create<MemoStore>((set, get) => ({
   },
 
   getMemoById: (id: string) => {
-    const numId = Number(id);
-    return get().memos.find(memo => memo.id === numId);
+    console.log('get().memos', get().memos);
+    return get().memos.find(memo => memo.id == id);
   },
 
   getMemosByDate: () => {
