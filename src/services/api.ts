@@ -1,5 +1,5 @@
 import axios, { type AxiosInstance, type InternalAxiosRequestConfig, type AxiosResponse } from 'axios';
-import type { LoginData, RegisterData, CreateMemoData, Memo, DesignTemplate } from '../types/index.js';
+import type { LoginData, RegisterData, CreateMemoData, CreateMemoWithImageData, Memo, DesignTemplate } from '../types/index.js';
 
 // API base URL - 실제 백엔드가 없을 때는 mock 데이터 사용
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
@@ -86,13 +86,19 @@ if (API_BASE_URL) {
     },
   });
 
-  // Request interceptor - 토큰 추가
+  // Request interceptor - 토큰 추가 및 Content-Type 동적 설정
   api.interceptors.request.use(
     (config: InternalAxiosRequestConfig) => {
       const token = localStorage.getItem('token');
       if (token && config.headers) {
         config.headers.Authorization = `Bearer ${token}`;
       }
+      
+      // FormData인 경우 Content-Type을 자동으로 설정하도록 함
+      if (config.data instanceof FormData) {
+        delete config.headers['Content-Type'];
+      }
+      
       return config;
     },
     (error) => {
@@ -195,6 +201,40 @@ export const memoAPI = {
         content: data.content,
         templateId: data.templateId,
         userId: '1',
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString()
+      };
+      
+      // Add to mock data
+      mockMemos.unshift(newMemo);
+      
+      return newMemo;
+    }
+  },
+
+  createMemoWithImage: async (data: CreateMemoWithImageData): Promise<Memo> => {
+    if (api) {
+      const formData = new FormData();
+      formData.append('title', data.title);
+      formData.append('content', data.content);
+      formData.append('templateId', data.templateId);
+      formData.append('image', data.image);
+      // formData.append('userId', '3'); // SQL 서버 테스트할 때
+      formData.append('userId', '68ba6585dc371dbe456ddb4d'); // MongoDB 서버 테스트할 때
+
+      const response = await api.post('/memos/with-image', formData);
+      return response.data;
+    } else {
+      // Return mock created memo with image
+      await new Promise(resolve => setTimeout(resolve, 1200));
+      const imageUrl = URL.createObjectURL(data.image); // 실제로는 서버에서 반환된 URL
+      const newMemo: Memo = {
+        id: Date.now().toString(),
+        title: data.title,
+        content: data.content,
+        templateId: data.templateId,
+        userId: '1',
+        imageUrl: imageUrl,
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString()
       };

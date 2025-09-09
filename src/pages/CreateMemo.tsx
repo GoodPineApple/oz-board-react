@@ -2,18 +2,20 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuthStore } from '../stores/authStore';
 import { useMemoStore } from '../stores/memoStore';
+import ImageUpload from '../components/common/ImageUpload';
 import type { CreateMemoData, DesignTemplate } from '../types/index.js';
 import './CreateMemo.css';
 
 const CreateMemo: React.FC = () => {
   const { isAuthenticated } = useAuthStore();
-  const { templates, fetchTemplates, createMemo, isLoading } = useMemoStore();
+  const { templates, fetchTemplates, createMemo, createMemoWithImage, isLoading } = useMemoStore();
   const navigate = useNavigate();
   
   const [formData, setFormData] = useState<CreateMemoData>({
     title: '',
     content: '',
-    templateId: ''
+    templateId: '',
+    image: undefined
   });
   const [selectedTemplate, setSelectedTemplate] = useState<DesignTemplate | null>(null);
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
@@ -28,14 +30,14 @@ const CreateMemo: React.FC = () => {
 
   useEffect(() => {
     if (templates.length > 0 && !formData.templateId) {
-      setFormData(prev => ({ ...prev, templateId: templates[0].id }));
+      setFormData(prev => ({ ...prev, templateId: templates[0].id.toString() }));
       setSelectedTemplate(templates[0]);
     }
   }, [templates, formData.templateId]);
 
   useEffect(() => {
     if (formData.templateId) {
-      const template = templates.find(t => t.id === formData.templateId);
+      const template = templates.find(t => t.id.toString() === formData.templateId);
       setSelectedTemplate(template || null);
     }
   }, [formData.templateId, templates]);
@@ -67,7 +69,24 @@ const CreateMemo: React.FC = () => {
     }
     
     try {
-      const newMemo = await createMemo(formData);
+      let newMemo;
+      if (formData.image) {
+        // 이미지가 있는 경우
+        newMemo = await createMemoWithImage({
+          title: formData.title,
+          content: formData.content,
+          templateId: formData.templateId,
+          image: formData.image
+        });
+      } else {
+        // 이미지가 없는 경우
+        newMemo = await createMemo({
+          title: formData.title,
+          content: formData.content,
+          templateId: formData.templateId
+        });
+      }
+      
       if (newMemo) {
         navigate(`/memo/${newMemo.id}`);
       }
@@ -81,6 +100,10 @@ const CreateMemo: React.FC = () => {
     if (errors[field]) {
       setErrors(prev => ({ ...prev, [field]: '' }));
     }
+  };
+
+  const handleImageSelect = (file: File | null) => {
+    setFormData(prev => ({ ...prev, image: file || undefined }));
   };
 
   if (!isAuthenticated) {
@@ -133,13 +156,21 @@ const CreateMemo: React.FC = () => {
             </div>
 
             <div className="form-group">
+              <ImageUpload
+                onImageSelect={handleImageSelect}
+                currentImage={formData.image}
+                disabled={isLoading}
+              />
+            </div>
+
+            <div className="form-group">
               <label>디자인 템플릿</label>
               <div className="template-grid">
                 {templates.map(template => (
                   <div
                     key={template.id}
-                    className={`template-option ${formData.templateId === template.id ? 'selected' : ''}`}
-                    onClick={() => handleInputChange('templateId', template.id)}
+                    className={`template-option ${formData.templateId === template.id.toString() ? 'selected' : ''}`}
+                    onClick={() => handleInputChange('templateId', template.id.toString())}
                   >
                     <div className="template-preview">{template.preview}</div>
                     <span className="template-name">{template.name}</span>
@@ -183,6 +214,15 @@ const CreateMemo: React.FC = () => {
               <h4 className="preview-title">
                 {formData.title || '메모 제목'}
               </h4>
+              {formData.image && (
+                <div className="preview-image">
+                  <img 
+                    src={URL.createObjectURL(formData.image)} 
+                    alt="Preview" 
+                    style={{ maxWidth: '100%', maxHeight: '200px', objectFit: 'contain', borderRadius: '4px' }}
+                  />
+                </div>
+              )}
               <div className="preview-content">
                 {formData.content || '메모 내용을 입력하면 여기에 표시됩니다.'}
               </div>

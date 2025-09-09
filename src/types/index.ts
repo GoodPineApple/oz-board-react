@@ -20,6 +20,7 @@ export interface Memo {
   content: string;
   templateId: string;
   userId: string;
+  imageUrl?: string;
   createdAt: string;
   updatedAt: string;
 }
@@ -41,6 +42,14 @@ export interface CreateMemoData {
   title: string;
   content: string;
   templateId: string;
+  image?: File;
+}
+
+export interface CreateMemoWithImageData {
+  title: string;
+  content: string;
+  templateId: string;
+  image: File;
 }
 
 export interface LoginData {

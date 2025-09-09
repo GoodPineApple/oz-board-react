@@ -1,11 +1,12 @@
 import { create } from 'zustand';
-import type { MemoState, Memo, CreateMemoData } from '../types/index.js';
+import type { MemoState, Memo, CreateMemoData, CreateMemoWithImageData } from '../types/index.js';
 import { memoAPI, templateAPI } from '../services/api.js';
 
 interface MemoStore extends MemoState {
   fetchMemos: () => Promise<void>;
   fetchTemplates: () => Promise<void>;
   createMemo: (data: CreateMemoData) => Promise<Memo | null>;
+  createMemoWithImage: (data: CreateMemoWithImageData) => Promise<Memo | null>;
   getMemoById: (id: string) => Memo | undefined;
   getMemosByDate: () => { [key: string]: Memo[] };
 }
@@ -58,6 +59,27 @@ export const useMemoStore = create<MemoStore>((set, get) => ({
     } catch (error) {
       console.error('Failed to create memo:', error);
       set({ error: 'Failed to create memo', isLoading: false });
+      return null;
+    }
+  },
+
+  createMemoWithImage: async (data: CreateMemoWithImageData) => {
+    set({ isLoading: true, error: null });
+    
+    try {
+      const newMemo = await memoAPI.createMemoWithImage(data);
+      
+      if (newMemo) {
+        const updatedMemos = [newMemo, ...get().memos];
+        set({ memos: updatedMemos, isLoading: false });
+        return newMemo;
+      }
+      
+      set({ isLoading: false });
+      return null;
+    } catch (error) {
+      console.error('Failed to create memo with image:', error);
+      set({ error: 'Failed to create memo with image', isLoading: false });
       return null;
     }
   },
