@@ -41,6 +41,15 @@ const MemoCard: React.FC<MemoCardProps> = ({ memo, template }) => {
         </div>
         
         <div className="memo-content">
+          {memo.imageUrl && (
+            <div className="memo-card-image">
+              <img 
+                src={memo.imageUrl} 
+                alt="메모 이미지" 
+                className="memo-card-image-display"
+              />
+            </div>
+          )}
           <p>{truncateContent(memo.content)}</p>
         </div>
         

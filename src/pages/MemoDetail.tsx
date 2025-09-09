@@ -16,6 +16,7 @@ const MemoDetail: React.FC = () => {
   useEffect(() => {
     if (id) {
       const foundMemo = getMemoById(id);
+      console.log('foundMemo', foundMemo);
       if (foundMemo) {
         setMemo(foundMemo);
       } else {
@@ -105,6 +106,15 @@ const MemoDetail: React.FC = () => {
           </div>
 
           <div className="memo-content">
+            {memo.imageUrl && (
+              <div className="memo-image">
+                <img 
+                  src={memo.imageUrl} 
+                  alt="메모 이미지" 
+                  className="memo-image-display"
+                />
+              </div>
+            )}
             <div className="content-text">
               {memo.content.split('\n').map((line, index) => (
                 <p key={index}>{line || '\u00A0'}</p>
